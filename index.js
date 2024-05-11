@@ -1,5 +1,6 @@
 require('dotenv').config();
 const { Bot, GrammyError, HttpError, Keyboard, InlineKeyboard } = require('grammy');
+const fs = require('fs').promises;
 
 // Создание экземпляра бота
 const bot = new Bot(process.env.BOT_API_KEY);
@@ -13,7 +14,8 @@ bot.command('start', async (ctx) => {
     .text('JavaScript')
     .row()
     .text('React')
-    .row()
+    .row();
+
   await ctx.reply(
     'Привет! Я помогу тебе подготовиться к собеседованию. Напиши /start, чтобы начать.'
   );
@@ -22,19 +24,35 @@ bot.command('start', async (ctx) => {
   });
 });
 
-//Обработчик ошибок
-bot.catch((err) => {
-  const ctx = err.ctx;
-  logger.error(`Error while handling update ${ctx.update.update_id}:`);
-  const e = err.error;
-
-  if (e instanceof GrammyError) {
-    console.error("Error in request:", e.description);
-  } else if (e instanceof HttpError) {
-    console.error("Could not contact Telegram:", e);
-  } else {
-    console.error("Unknown error:", e);
+bot.on('message', async (ctx) => {
+  const { text } = ctx.message;
+  if (text === 'HTML') {
+    // Здесь можно вызвать функцию для начала викторины по HTML
+    await startHTMLQuiz(ctx);
   }
-  });
+});
 
+async function startHTMLQuiz(ctx) {
+  try {
+    // Загрузка вопросов из файла
+    const data = await fs.readFile('questions/html_questions.json', 'utf8');
+    const { questions } = JSON.parse(data);
+    
+    // Выбор случайного вопроса
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    const { question, options } = questions[randomIndex];
+
+    // Формирование клавиатуры с вариантами ответов
+    const keyboard = new Keyboard();
+    options.forEach(option => keyboard.text(option).row());
+
+    // Отправка вопроса пользователю
+    await ctx.reply(question, { reply_markup: keyboard });
+  } catch (error) {
+    console.error('Ошибка загрузки вопросов:', error);
+    await ctx.reply('Произошла ошибка загрузки вопросов. Попробуйте еще раз позже.');
+  }
+}
+
+// Запуск бота
 bot.start();
