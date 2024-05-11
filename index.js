@@ -27,10 +27,34 @@ bot.command('start', async (ctx) => {
 bot.on('message', async (ctx) => {
   const { text } = ctx.message;
   if (text === 'HTML') {
-    // Здесь можно вызвать функцию для начала викторины по HTML
     await startHTMLQuiz(ctx);
+  } else {
+    // Добавляем обработчик ответа на вопрос
+    handleQuizAnswer(ctx, text);
   }
 });
+
+async function handleQuizAnswer(ctx, answer) {
+  try {
+    // Получаем правильный ответ из базы данных или файла
+    const correctAnswer = ""; // Ваш код для получения правильного ответа
+  
+    // Проверяем ответ пользователя
+    if (answer === correctAnswer) {
+      // Отправляем сообщение о правильном ответе
+      await ctx.reply('Верно!');
+
+      // Отправляем следующий вопрос
+      await startHTMLQuiz(ctx);
+    } else {
+      // Отправляем сообщение о неправильном ответе
+      await ctx.reply('Неправильно. Попробуйте еще раз.');
+    }
+  } catch (error) {
+    console.error('Ошибка обработки ответа на вопрос:', error);
+    await ctx.reply('Произошла ошибка при обработке ответа на вопрос. Попробуйте еще раз позже.');
+  }
+}
 
 async function startHTMLQuiz(ctx) {
   try {
