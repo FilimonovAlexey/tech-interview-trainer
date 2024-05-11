@@ -8,16 +8,14 @@ const bot = new Bot(process.env.BOT_API_KEY);
 bot.command('start', async (ctx) => {
   const startKeyboard = new Keyboard()
     .text('HTML')
-    .row()
     .text('CSS')
     .row()
     .text('JavaScript')
-    .row()
     .text('React')
     .row();
 
   await ctx.reply(
-    'Привет! Я помогу тебе подготовиться к собеседованию. Напиши /start, чтобы начать.'
+    'Привет! Я помогу тебе подготовиться к собеседованию.'
   );
   await ctx.reply('С чего начнем? Выбирай тему👇', {
     reply_markup: startKeyboard,
