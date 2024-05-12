@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {
+      "question": "Что возвращает оператор typeof для массивов в JavaScript?",
+      "options": ["'array'", "'object'", "'string'", "'undefined'"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой метод создает новый массив с результатом вызова указанной функции для каждого элемента массива?",
+      "options": ["map()", "filter()", "reduce()", "forEach()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой оператор используется для того, чтобы проверить, как тип, так и значение?",
+      "options": ["==", "===", "equals", "==="],
+      "correctOption": 3
+    }
+  ]
+}

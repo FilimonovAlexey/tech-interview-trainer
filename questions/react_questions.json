@@ -1,0 +1,19 @@
+{
+  "questions": [
+    {
+      "question": "Что из перечисленного не является хуком в React?",
+      "options": ["useEffect()", "useState()", "useReducer()", "useScript()"],
+      "correctOption": 3
+    },
+    {
+      "question": "Какой метод классового компонента вызывается при монтировании компонента в DOM?",
+      "options": ["componentDidMount()", "componentWillMount()", "componentDidUpdate()", "componentWillUnmount()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Каким образом можно оптимизировать производительность функциональных компонентов в React?",
+      "options": ["Использовать React.PureComponent", "Использовать useMemo()", "Использовать shouldComponentUpdate()", "Использовать React.Component"],
+      "correctOption": 1
+    }
+  ]
+}
