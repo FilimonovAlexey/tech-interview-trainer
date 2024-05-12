@@ -1,9 +1,14 @@
 require('dotenv').config();
-const { Bot, GrammyError, HttpError, Keyboard, InlineKeyboard } = require('grammy');
+const { Bot, GrammyError, HttpError, Keyboard, InlineKeyboard, session } = require('grammy');
 const fs = require('fs').promises;
 
 // Создание экземпляра бота
 const bot = new Bot(process.env.BOT_API_KEY);
+
+// Настройка сессии с использованием внутреннего хранилища
+bot.use(session({
+  initial: () => ({})
+}));
 
 bot.command('start', async (ctx) => {
   const startKeyboard = new Keyboard()
@@ -34,18 +39,18 @@ bot.on('message', async (ctx) => {
 
 async function handleQuizAnswer(ctx, answer) {
   try {
-    // Получаем правильный ответ из базы данных или файла
-    const correctAnswer = ""; // Ваш код для получения правильного ответа
-  
-    // Проверяем ответ пользователя
-    if (answer === correctAnswer) {
-      // Отправляем сообщение о правильном ответе
-      await ctx.reply('Верно!');
+    if (!ctx.session.currentQuestion) {
+      await ctx.reply('Кажется, я забыл вопрос. Давай начнем заново.');
+      return;
+    }
 
-      // Отправляем следующий вопрос
-      await startHTMLQuiz(ctx);
+    // Получаем правильный ответ из сохраненной сессии
+    const correctAnswer = ctx.session.currentQuestion.options[ctx.session.currentQuestion.correctOption];
+
+    if (answer === correctAnswer) {
+      await ctx.reply('Верно!');
+      await startHTMLQuiz(ctx); // Начинаем следующий вопрос
     } else {
-      // Отправляем сообщение о неправильном ответе
       await ctx.reply('Неправильно. Попробуйте еще раз.');
     }
   } catch (error) {
@@ -54,27 +59,27 @@ async function handleQuizAnswer(ctx, answer) {
   }
 }
 
+
 async function startHTMLQuiz(ctx) {
   try {
-    // Загрузка вопросов из файла
     const data = await fs.readFile('questions/html_questions.json', 'utf8');
     const { questions } = JSON.parse(data);
-    
-    // Выбор случайного вопроса
     const randomIndex = Math.floor(Math.random() * questions.length);
-    const { question, options } = questions[randomIndex];
+    const questionData = questions[randomIndex];
 
-    // Формирование клавиатуры с вариантами ответов
+    // Сохранение информации о текущем вопросе в сессии пользователя
+    ctx.session.currentQuestion = questionData; 
+
     const keyboard = new Keyboard();
-    options.forEach(option => keyboard.text(option).row());
+    questionData.options.forEach(option => keyboard.text(option).row());
 
-    // Отправка вопроса пользователю
-    await ctx.reply(question, { reply_markup: keyboard });
+    await ctx.reply(questionData.question, { reply_markup: keyboard });
   } catch (error) {
     console.error('Ошибка загрузки вопросов:', error);
     await ctx.reply('Произошла ошибка загрузки вопросов. Попробуйте еще раз позже.');
   }
 }
+
 
 // Запуск бота
 bot.start();
