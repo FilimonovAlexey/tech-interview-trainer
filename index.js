@@ -10,6 +10,15 @@ bot.use(session({
   initial: () => ({})
 }));
 
+function initializeQuizState(ctx, category) {
+  if (!ctx.session.askedQuestions) {
+    ctx.session.askedQuestions = {};
+  }
+  if (!ctx.session.askedQuestions[category]) {
+    ctx.session.askedQuestions[category] = [];
+  }
+}
+
 bot.command('start', async (ctx) => {
   const startKeyboard = new Keyboard()
     .text('HTML')
@@ -68,49 +77,60 @@ async function handleQuizAnswer(ctx, answer) {
   }
 }
 
-
+function getRandomQuestion(questions, asked) {
+  const availableQuestions = questions.filter((_, index) => !asked.includes(index));
+  if (availableQuestions.length === 0) {
+    return null; // Все вопросы были заданы
+  }
+  const randomIndex = Math.floor(Math.random() * availableQuestions.length);
+  return availableQuestions[randomIndex];
+}
 
 async function startHTMLQuiz(ctx) {
-  try {
-    const data = await fs.readFile('questions/html_questions.json', 'utf8');
-    const { questions } = JSON.parse(data);
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    const questionData = questions[randomIndex];
-
-    ctx.session.currentQuestion = questionData;
-    ctx.session.currentCategory = 'HTML'; // Сохраняем текущую категорию
-
-    const keyboard = new Keyboard();
-    questionData.options.forEach(option => keyboard.text(option).row());
-
-    await ctx.reply(questionData.question, { reply_markup: keyboard });
-  } catch (error) {
-    console.error('Ошибка загрузки вопросов:', error);
-    await ctx.reply('Произошла ошибка загрузки вопросов. Попробуйте еще раз позже.');
+  initializeQuizState(ctx, 'HTML');
+  
+  const data = await fs.readFile('questions/html_questions.json', 'utf8');
+  const { questions } = JSON.parse(data);
+  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['HTML']);
+  
+  if (!questionData) {
+    await ctx.reply("Вы ответили на все вопросы по HTML!");
+    return;
   }
+  
+  const questionIndex = questions.indexOf(questionData);
+  ctx.session.askedQuestions['HTML'].push(questionIndex);
+  ctx.session.currentQuestion = questionData;
+  ctx.session.currentCategory = 'HTML';
+  
+  const keyboard = new Keyboard();
+  questionData.options.forEach(option => keyboard.text(option).row());
+  
+  await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
 
 async function startCSSQuiz(ctx) {
-  try {
-    const data = await fs.readFile('questions/css_questions.json', 'utf8');
-    const { questions } = JSON.parse(data);
-    const randomIndex = Math.floor(Math.random() * questions.length);
-    const questionData = questions[randomIndex];
-
-    ctx.session.currentQuestion = questionData;
-    ctx.session.currentCategory = 'CSS'; // Сохраняем текущую категорию
-
-    const keyboard = new Keyboard();
-    questionData.options.forEach(option => keyboard.text(option).row());
-
-    await ctx.reply(questionData.question, { reply_markup: keyboard });
-  } catch (error) {
-    console.error('Ошибка загрузки вопросов:', error);
-    await ctx.reply('Произошла ошибка загрузки вопросов. Попробуйте еще раз позже.');
+  initializeQuizState(ctx, 'CSS');
+  
+  const data = await fs.readFile('questions/css_questions.json', 'utf8');
+  const { questions } = JSON.parse(data);
+  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['CSS']);
+  
+  if (!questionData) {
+    await ctx.reply("Вы ответили на все вопросы по CSS!");
+    return;
   }
+  
+  const questionIndex = questions.indexOf(questionData);
+  ctx.session.askedQuestions['CSS'].push(questionIndex);
+  ctx.session.currentQuestion = questionData;
+  ctx.session.currentCategory = 'CSS';
+  
+  const keyboard = new Keyboard();
+  questionData.options.forEach(option => keyboard.text(option).row());
+  
+  await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
-
-
 
 // Запуск бота
 bot.start();
