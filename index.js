@@ -38,16 +38,30 @@ bot.command('start', async (ctx) => {
 
 bot.on('message', async (ctx) => {
   const { text } = ctx.message;
-  switch (text) {
-    case 'HTML':
-      await startHTMLQuiz(ctx);
-      break;
-    case 'CSS':
-      await startCSSQuiz(ctx);
-      break;
-    default:
-      // Обработка ответов на вопросы
-      handleQuizAnswer(ctx, text);
+  if (text === 'Назад') {
+    const startKeyboard = new Keyboard()
+      .text('HTML')
+      .text('CSS')
+      .row()
+      .text('JavaScript')
+      .text('React')
+      .row();
+
+    await ctx.reply('Выберите категорию:', {
+      reply_markup: startKeyboard,
+    });
+  } else {
+    switch (text) {
+      case 'HTML':
+        await startHTMLQuiz(ctx);
+        break;
+      case 'CSS':
+        await startCSSQuiz(ctx);
+        break;
+      default:
+        // Обработка ответов на вопросы
+        handleQuizAnswer(ctx, text);
+    }
   }
 });
 
@@ -105,6 +119,7 @@ async function startHTMLQuiz(ctx) {
   
   const keyboard = new Keyboard();
   questionData.options.forEach(option => keyboard.text(option).row());
+  keyboard.text('Назад').row(); // Добавляем кнопку "Назад"
   
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
@@ -128,6 +143,7 @@ async function startCSSQuiz(ctx) {
   
   const keyboard = new Keyboard();
   questionData.options.forEach(option => keyboard.text(option).row());
+  keyboard.text('Назад').row(); // Добавляем кнопку "Назад"
   
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
