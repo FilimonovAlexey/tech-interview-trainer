@@ -58,6 +58,12 @@ bot.on('message', async (ctx) => {
       case 'CSS':
         await startCSSQuiz(ctx);
         break;
+      case 'JavaScript':
+        await startJavaScriptQuiz(ctx);
+        break;
+      case 'React':
+        await startReactQuiz(ctx);
+        break;
       default:
         // Обработка ответов на вопросы
         handleQuizAnswer(ctx, text);
@@ -77,10 +83,23 @@ async function handleQuizAnswer(ctx, answer) {
     if (answer === correctAnswer) {
       await ctx.reply('Верно!');
       // Выбираем функцию викторины на основе текущей категории
-      if (ctx.session.currentCategory === 'HTML') {
-        await startHTMLQuiz(ctx);
-      } else if (ctx.session.currentCategory === 'CSS') {
-        await startCSSQuiz(ctx);
+      switch (ctx.session.currentCategory) {
+        case 'HTML':
+          await startHTMLQuiz(ctx);
+          break;
+        case 'CSS':
+          await startCSSQuiz(ctx);
+          break;
+        case 'JavaScript':
+          await startJavaScriptQuiz(ctx);
+          break;
+        case 'React':
+          await startReactQuiz(ctx);
+          break;
+        default:
+          await ctx.reply('Выберите категорию:', {
+            reply_markup: startKeyboard,
+          });
       }
     } else {
       await ctx.reply('Неправильно. Попробуйте еще раз.');
@@ -90,6 +109,7 @@ async function handleQuizAnswer(ctx, answer) {
     await ctx.reply('Произошла ошибка при обработке ответа на вопрос. Попробуйте еще раз позже.');
   }
 }
+
 
 function getRandomQuestion(questions, asked) {
   const availableQuestions = questions.filter((_, index) => !asked.includes(index));
@@ -144,6 +164,54 @@ async function startCSSQuiz(ctx) {
   const keyboard = new Keyboard();
   questionData.options.forEach(option => keyboard.text(option).row());
   keyboard.text('Назад').row(); // Добавляем кнопку "Назад"
+  
+  await ctx.reply(questionData.question, { reply_markup: keyboard });
+}
+
+async function startJavaScriptQuiz(ctx) {
+  initializeQuizState(ctx, 'JavaScript');
+  
+  const data = await fs.readFile('questions/js_questions.json', 'utf8');
+  const { questions } = JSON.parse(data);
+  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['JavaScript']);
+  
+  if (!questionData) {
+    await ctx.reply("Вы ответили на все вопросы по JavaScript!");
+    return;
+  }
+  
+  const questionIndex = questions.indexOf(questionData);
+  ctx.session.askedQuestions['JavaScript'].push(questionIndex);
+  ctx.session.currentQuestion = questionData;
+  ctx.session.currentCategory = 'JavaScript';
+  
+  const keyboard = new Keyboard();
+  questionData.options.forEach(option => keyboard.text(option).row());
+  keyboard.text('Назад').row();
+  
+  await ctx.reply(questionData.question, { reply_markup: keyboard });
+}
+
+async function startReactQuiz(ctx) {
+  initializeQuizState(ctx, 'React');
+  
+  const data = await fs.readFile('questions/react_questions.json', 'utf8');
+  const { questions } = JSON.parse(data);
+  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['React']);
+  
+  if (!questionData) {
+    await ctx.reply("Вы ответили на все вопросы по React!");
+    return;
+  }
+  
+  const questionIndex = questions.indexOf(questionData);
+  ctx.session.askedQuestions['React'].push(questionIndex);
+  ctx.session.currentQuestion = questionData;
+  ctx.session.currentCategory = 'React';
+  
+  const keyboard = new Keyboard();
+  questionData.options.forEach(option => keyboard.text(option).row());
+  keyboard.text('Назад').row();
   
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
