@@ -29,11 +29,16 @@ bot.command('start', async (ctx) => {
 
 bot.on('message', async (ctx) => {
   const { text } = ctx.message;
-  if (text === 'HTML') {
-    await startHTMLQuiz(ctx);
-  } else {
-    // Добавляем обработчик ответа на вопрос
-    handleQuizAnswer(ctx, text);
+  switch (text) {
+    case 'HTML':
+      await startHTMLQuiz(ctx);
+      break;
+    case 'CSS':
+      await startCSSQuiz(ctx);
+      break;
+    default:
+      // Обработка ответов на вопросы
+      handleQuizAnswer(ctx, text);
   }
 });
 
@@ -79,6 +84,26 @@ async function startHTMLQuiz(ctx) {
     await ctx.reply('Произошла ошибка загрузки вопросов. Попробуйте еще раз позже.');
   }
 }
+
+async function startCSSQuiz(ctx) {
+  try {
+    const data = await fs.readFile('questions/css_questions.json', 'utf8');
+    const { questions } = JSON.parse(data);
+    const randomIndex = Math.floor(Math.random() * questions.length);
+    const questionData = questions[randomIndex];
+
+    ctx.session.currentQuestion = questionData;
+
+    const keyboard = new Keyboard();
+    questionData.options.forEach(option => keyboard.text(option).row());
+
+    await ctx.reply(questionData.question, { reply_markup: keyboard });
+  } catch (error) {
+    console.error('Ошибка загрузки вопросов:', error);
+    await ctx.reply('Произошла ошибка загрузки вопросов. Попробуйте еще раз позже.');
+  }
+}
+
 
 
 // Запуск бота
