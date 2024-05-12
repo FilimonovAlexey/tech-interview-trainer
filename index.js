@@ -49,12 +49,16 @@ async function handleQuizAnswer(ctx, answer) {
       return;
     }
 
-    // Получаем правильный ответ из сохраненной сессии
     const correctAnswer = ctx.session.currentQuestion.options[ctx.session.currentQuestion.correctOption];
 
     if (answer === correctAnswer) {
       await ctx.reply('Верно!');
-      await startHTMLQuiz(ctx); // Начинаем следующий вопрос
+      // Выбираем функцию викторины на основе текущей категории
+      if (ctx.session.currentCategory === 'HTML') {
+        await startHTMLQuiz(ctx);
+      } else if (ctx.session.currentCategory === 'CSS') {
+        await startCSSQuiz(ctx);
+      }
     } else {
       await ctx.reply('Неправильно. Попробуйте еще раз.');
     }
@@ -65,6 +69,7 @@ async function handleQuizAnswer(ctx, answer) {
 }
 
 
+
 async function startHTMLQuiz(ctx) {
   try {
     const data = await fs.readFile('questions/html_questions.json', 'utf8');
@@ -72,8 +77,8 @@ async function startHTMLQuiz(ctx) {
     const randomIndex = Math.floor(Math.random() * questions.length);
     const questionData = questions[randomIndex];
 
-    // Сохранение информации о текущем вопросе в сессии пользователя
-    ctx.session.currentQuestion = questionData; 
+    ctx.session.currentQuestion = questionData;
+    ctx.session.currentCategory = 'HTML'; // Сохраняем текущую категорию
 
     const keyboard = new Keyboard();
     questionData.options.forEach(option => keyboard.text(option).row());
@@ -93,6 +98,7 @@ async function startCSSQuiz(ctx) {
     const questionData = questions[randomIndex];
 
     ctx.session.currentQuestion = questionData;
+    ctx.session.currentCategory = 'CSS'; // Сохраняем текущую категорию
 
     const keyboard = new Keyboard();
     questionData.options.forEach(option => keyboard.text(option).row());
