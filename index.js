@@ -78,8 +78,8 @@ function initializeRatingMode(ctx) {
   ctx.session.currentCategory = null;
 }
 
-bot.command('start', async (ctx) => {
-  const startKeyboard = new Keyboard()
+function getStartKeyboard() {
+  return new Keyboard()
     .text('HTML')
     .text('CSS')
     .row()
@@ -90,6 +90,10 @@ bot.command('start', async (ctx) => {
     .row()
     .text('Таблица лидеров')
     .row();
+}
+
+bot.command('start', async (ctx) => {
+  const startKeyboard = getStartKeyboard();
 
   await ctx.reply(
     'Привет! Я помогу тебе подготовиться к собеседованию.'
@@ -102,17 +106,7 @@ bot.command('start', async (ctx) => {
 bot.on('message', async (ctx) => {
   const { text } = ctx.message;
   if (text === 'Назад') {
-    const startKeyboard = new Keyboard()
-      .text('HTML')
-      .text('CSS')
-      .row()
-      .text('JavaScript')
-      .text('React')
-      .row()
-      .text('Рейтинговый режим')
-      .row()
-      .text('Таблица лидеров')
-      .row();
+    const startKeyboard = getStartKeyboard();
 
     await ctx.reply('Выберите категорию:', {
       reply_markup: startKeyboard,
@@ -165,8 +159,11 @@ async function handleQuizAnswer(ctx, answer) {
       if (ctx.session.ratingMode) {
         const username = ctx.from.username || ctx.from.first_name;
         await updateLeaderboard(username, ctx.session.score);
-        await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`);
         ctx.session.ratingMode = false; // Завершаем рейтинговый режим
+        const startKeyboard = getStartKeyboard();
+        await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`, {
+          reply_markup: startKeyboard,
+        });
         ctx.session.score = 0;
       } else {
         await ctx.reply('Неправильно. Попробуйте еще раз.');
