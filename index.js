@@ -13,13 +13,18 @@ bot.use(session({
 let questionsData = {};
 
 async function loadQuestions() {
-  const categories = ['html', 'css', 'js', 'react'];
-  for (const category of categories) {
+  const categories = {
+    html: 'html_questions.json',
+    css: 'css_questions.json',
+    js: 'js_questions.json',
+    react: 'react_questions.json'
+  };
+  for (const [category, file] of Object.entries(categories)) {
     try {
-      const data = await fs.readFile(`questions/${category}_questions.json`, 'utf8');
+      const data = await fs.readFile(`questions/${file}`, 'utf8');
       questionsData[category] = JSON.parse(data).questions;
     } catch (error) {
-      console.error(`Ошибка при загрузке вопросов из файла ${category}_questions.json:`, error);
+      console.error(`Ошибка при загрузке вопросов из файла ${file}:`, error);
     }
   }
 }
@@ -33,6 +38,13 @@ function initializeQuizState(ctx, category) {
   }
 }
 
+function initializeRatingMode(ctx) {
+  ctx.session.ratingMode = true;
+  ctx.session.score = 0;
+  ctx.session.askedQuestions = {};
+  ctx.session.currentCategory = null;
+}
+
 bot.command('start', async (ctx) => {
   const startKeyboard = new Keyboard()
     .text('HTML')
@@ -40,6 +52,8 @@ bot.command('start', async (ctx) => {
     .row()
     .text('JavaScript')
     .text('React')
+    .row()
+    .text('Рейтинговый режим')
     .row();
 
   await ctx.reply(
@@ -59,6 +73,8 @@ bot.on('message', async (ctx) => {
       .row()
       .text('JavaScript')
       .text('React')
+      .row()
+      .text('Рейтинговый режим')
       .row();
 
     await ctx.reply('Выберите категорию:', {
@@ -67,10 +83,20 @@ bot.on('message', async (ctx) => {
   } else {
     switch (text) {
       case 'HTML':
+        await startQuiz(ctx, 'html');
+        break;
       case 'CSS':
+        await startQuiz(ctx, 'css');
+        break;
       case 'JavaScript':
+        await startQuiz(ctx, 'js');
+        break;
       case 'React':
-        await startQuiz(ctx, text.toLowerCase());
+        await startQuiz(ctx, 'react');
+        break;
+      case 'Рейтинговый режим':
+        initializeRatingMode(ctx);
+        await startRatingQuiz(ctx);
         break;
       default:
         handleQuizAnswer(ctx, text);
@@ -89,9 +115,20 @@ async function handleQuizAnswer(ctx, answer) {
 
     if (answer === correctAnswer) {
       await ctx.reply('Верно!');
-      await startQuiz(ctx, ctx.session.currentCategory);
+      if (ctx.session.ratingMode) {
+        ctx.session.score += 1;
+        await startRatingQuiz(ctx);
+      } else {
+        await startQuiz(ctx, ctx.session.currentCategory);
+      }
     } else {
-      await ctx.reply('Неправильно. Попробуйте еще раз.');
+      if (ctx.session.ratingMode) {
+        await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`);
+        ctx.session.ratingMode = false; // Завершаем рейтинговый режим
+        ctx.session.score = 0;
+      } else {
+        await ctx.reply('Неправильно. Попробуйте еще раз.');
+      }
     }
   } catch (error) {
     console.error('Ошибка обработки ответа на вопрос:', error);
@@ -113,7 +150,7 @@ async function startQuiz(ctx, category) {
 
   const questions = questionsData[category];
   if (!questions) {
-    await ctx.reply(`Не удалось загрузить вопросы для категории ${category.toUpperCase()}`);
+    await ctx.reply(`Не удалось загрузить вопросы для категории ${category.toUpperCase()}. Проверьте файл: questions/${category}_questions.json`);
     return;
   }
 
@@ -135,6 +172,37 @@ async function startQuiz(ctx, category) {
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
 
+async function startRatingQuiz(ctx) {
+  const categories = ['html', 'css', 'js', 'react'];
+  const randomCategory = categories[Math.floor(Math.random() * categories.length)];
+
+  initializeQuizState(ctx, randomCategory);
+
+  const questions = questionsData[randomCategory];
+  if (!questions) {
+    await ctx.reply(`Не удалось загрузить вопросы для категории ${randomCategory.toUpperCase()}. Проверьте файл: questions/${randomCategory}_questions.json`);
+    return;
+  }
+
+  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions[randomCategory]);
+  if (!questionData) {
+    await ctx.reply(`Вы ответили на все вопросы по ${randomCategory.toUpperCase()}!`);
+    return;
+  }
+
+  const questionIndex = questions.indexOf(questionData);
+  ctx.session.askedQuestions[randomCategory].push(questionIndex);
+  ctx.session.currentQuestion = questionData;
+  ctx.session.currentCategory = randomCategory;
+
+  const keyboard = new Keyboard();
+  questionData.options.forEach(option => keyboard.text(option).row());
+  keyboard.text('Назад').row();
+
+  await ctx.reply(questionData.question, { reply_markup: keyboard });
+}
+
+// Запуск бота
 (async () => {
   await loadQuestions();
   bot.start();
