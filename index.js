@@ -86,9 +86,9 @@ function getStartKeyboard() {
     .text('JavaScript')
     .text('React')
     .row()
-    .text('Рейтинговый режим')
+    .text('🏆Рейтинговый режим')
     .row()
-    .text('Таблица лидеров')
+    .text('📣Таблица лидеров')
     .row();
 }
 
@@ -105,7 +105,7 @@ bot.command('start', async (ctx) => {
 
 bot.on('message', async (ctx) => {
   const { text } = ctx.message;
-  if (text === 'Назад') {
+  if (text === 'Назад ↩️') {
     const startKeyboard = getStartKeyboard();
 
     await ctx.reply('Выберите категорию:', {
@@ -125,11 +125,11 @@ bot.on('message', async (ctx) => {
       case 'React':
         await startQuiz(ctx, 'react');
         break;
-      case 'Рейтинговый режим':
+      case '🏆Рейтинговый режим':
         initializeRatingMode(ctx);
         await startRatingQuiz(ctx);
         break;
-      case 'Таблица лидеров':
+      case '📣Таблица лидеров':
         await showLeaderboard(ctx);
         break;
       default:
@@ -206,7 +206,7 @@ async function startQuiz(ctx, category) {
 
   const keyboard = new Keyboard();
   questionData.options.forEach(option => keyboard.text(option).row());
-  keyboard.text('Назад').row();
+  keyboard.text('Назад ↩️').row();
 
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
@@ -236,7 +236,7 @@ async function startRatingQuiz(ctx) {
 
   const keyboard = new Keyboard();
   questionData.options.forEach(option => keyboard.text(option).row());
-  keyboard.text('Назад').row();
+  keyboard.text('Назад ↩️').row();
 
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
