@@ -14,6 +14,141 @@
       "question": "Какой тег используется для создания списка?",
       "options": ["<list>", "<ul>", "<ol>", "<menu>"],
       "correctOption": 2
+    },
+    {
+      "question": "Какой тег используется для вставки изображения?",
+      "options": ["<picture>", "<img>", "<src>", "<image>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой атрибут используется для добавления альтернативного текста к изображению?",
+      "options": ["alt", "title", "src", "href"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания заголовка самого высокого уровня?",
+      "options": ["<h1>", "<h6>", "<header>", "<title>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания нумерованного списка?",
+      "options": ["<ul>", "<ol>", "<li>", "<dl>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания абзаца?",
+      "options": ["<br>", "<span>", "<p>", "<article>"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какой атрибут используется для задания URL-адреса ссылки?",
+      "options": ["src", "href", "link", "url"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания строки в таблице?",
+      "options": ["<tr>", "<td>", "<th>", "<table>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания ячейки таблицы?",
+      "options": ["<tr>", "<td>", "<th>", "<table>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания выделенного текста?",
+      "options": ["<strong>", "<b>", "<em>", "<i>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания курсивного текста?",
+      "options": ["<em>", "<i>", "<strong>", "<b>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания заголовка страницы в браузере?",
+      "options": ["<header>", "<title>", "<meta>", "<head>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания секции документа?",
+      "options": ["<section>", "<div>", "<article>", "<span>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания формы?",
+      "options": ["<input>", "<form>", "<textarea>", "<button>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой атрибут используется для отправки данных формы?",
+      "options": ["action", "method", "name", "type"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания ввода в форме?",
+      "options": ["<input>", "<form>", "<textarea>", "<button>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой атрибут используется для указания URL-адреса, на который отправляются данные формы?",
+      "options": ["action", "method", "name", "type"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания выпадающего списка?",
+      "options": ["<select>", "<option>", "<list>", "<dropdown>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания элемента выпадающего списка?",
+      "options": ["<select>", "<option>", "<list>", "<dropdown>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания кнопки?",
+      "options": ["<button>", "<input>", "<form>", "<label>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания контейнера со строгим форматированием текста?",
+      "options": ["<code>", "<pre>", "<samp>", "<kbd>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания горизонтальной линии?",
+      "options": ["<line>", "<hr>", "<br>", "<div>"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой тег используется для создания всплывающего окна с подсказкой?",
+      "options": ["<title>", "<tooltip>", "<hint>", "<abbr>"],
+      "correctOption": 3
+    },
+    {
+      "question": "Какой тег используется для определения заголовка секции или документа?",
+      "options": ["<header>", "<h1>", "<title>", "<section>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания метаинформации о документе?",
+      "options": ["<meta>", "<head>", "<link>", "<style>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для вставки аудиофайла на страницу?",
+      "options": ["<audio>", "<sound>", "<media>", "<voice>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для вставки видеофайла на страницу?",
+      "options": ["<video>", "<movie>", "<media>", "<clip>"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой тег используется для создания встроенного фрейма?",
+      "options": ["<iframe>", "<frame>", "<embed>", "<object>"],
+      "correctOption": 0
     }
   ]
 }
