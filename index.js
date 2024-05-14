@@ -3,6 +3,8 @@ const { Bot, GrammyError, HttpError, Keyboard, InlineKeyboard, session } = requi
 const fs = require('fs').promises;
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
+const { format } = require('date-fns');
+const { ru } = require('date-fns/locale'); // Подключаем русскую локаль
 
 // Создание экземпляра бота
 const bot = new Bot(process.env.BOT_API_KEY);
@@ -42,19 +44,23 @@ async function initDatabase() {
     CREATE TABLE IF NOT EXISTS leaderboard (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT NOT NULL,
-      score INTEGER NOT NULL
+      score INTEGER NOT NULL,
+      last_played TEXT NOT NULL
     )
   `);
 }
 
 async function updateLeaderboard(username, score) {
+  const now = new Date().toISOString();
   const existingEntry = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
   if (existingEntry) {
     if (existingEntry.score < score) {
-      await db.run('UPDATE leaderboard SET score = ? WHERE username = ?', score, username);
+      await db.run('UPDATE leaderboard SET score = ?, last_played = ? WHERE username = ?', score, now, username);
+    } else {
+      await db.run('UPDATE leaderboard SET last_played = ? WHERE username = ?', now, username);
     }
   } else {
-    await db.run('INSERT INTO leaderboard (username, score) VALUES (?, ?)', username, score);
+    await db.run('INSERT INTO leaderboard (username, score, last_played) VALUES (?, ?, ?)', username, score, now);
   }
 }
 
@@ -96,11 +102,30 @@ bot.command('start', async (ctx) => {
   const startKeyboard = getStartKeyboard();
 
   await ctx.reply(
-    'Привет! Я помогу тебе подготовиться к собеседованию.'
+    'Привет! Я помогу тебе подготовиться к собеседованию. Используй команды ниже для взаимодействия с ботом:\n' +
+    '/start - Начать использование бота\n' +
+    '/profile - Просмотр вашего профиля',
+    { reply_markup: startKeyboard }
   );
   await ctx.reply('С чего начнем? Выбирай тему👇', {
     reply_markup: startKeyboard,
   });
+});
+
+bot.command('profile', async (ctx) => {
+  const username = ctx.from.username || ctx.from.first_name;
+  const result = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
+
+  if (result) {
+    const formattedDate = format(new Date(result.last_played), 'dd MMMM yyyy, HH:mm', { locale: ru });
+    const profileMessage = `👤 Профиль пользователя ${username}:\n` +
+      `🏆 Счет в рейтинговой игре: ${result.score} очков\n` +
+      `📅 Дата последней игры: ${formattedDate}`;
+
+    await ctx.reply(profileMessage);
+  } else {
+    await ctx.reply('Профиль не найден. Начните игру в рейтинговом режиме, чтобы создать профиль.');
+  }
 });
 
 bot.on('message', async (ctx) => {
@@ -255,6 +280,12 @@ async function showLeaderboard(ctx) {
 
   await ctx.reply(leaderboardMessage);
 }
+
+// Установка описаний команд
+bot.api.setMyCommands([
+  { command: 'start', description: 'Запуск бота' },
+  { command: 'profile', description: 'Просмотр вашего профиля' }
+]);
 
 // Запуск бота
 (async () => {
