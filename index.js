@@ -11,7 +11,14 @@ const bot = new Bot(process.env.BOT_API_KEY);
 
 // Настройка сессии с использованием внутреннего хранилища
 bot.use(session({
-  initial: () => ({})
+  initial: () => ({
+    correctAnswers: {
+      html: 0,
+      css: 0,
+      js: 0,
+      react: 0
+    }
+  })
 }));
 
 let questionsData = {};
@@ -116,11 +123,25 @@ bot.command('profile', async (ctx) => {
   const username = ctx.from.username || ctx.from.first_name;
   const result = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
 
+  const htmlQuestionsTotal = questionsData.html.length;
+  const cssQuestionsTotal = questionsData.css.length;
+  const jsQuestionsTotal = questionsData.js.length;
+  const reactQuestionsTotal = questionsData.react.length;
+
+  const htmlCorrect = ctx.session.correctAnswers.html;
+  const cssCorrect = ctx.session.correctAnswers.css;
+  const jsCorrect = ctx.session.correctAnswers.js;
+  const reactCorrect = ctx.session.correctAnswers.react;
+
   if (result) {
     const formattedDate = format(new Date(result.last_played), 'dd MMMM yyyy, HH:mm', { locale: ru });
     const profileMessage = `👤 Профиль пользователя ${username}:\n` +
       `🏆 Счет в рейтинговой игре: ${result.score} очков\n` +
-      `📅 Дата последней игры: ${formattedDate}`;
+      `📅 Дата последней игры: ${formattedDate}\n` +
+      `📚 Вопросы по HTML: решено верно ${htmlCorrect} из ${htmlQuestionsTotal}\n` +
+      `📚 Вопросы по CSS: решено верно ${cssCorrect} из ${cssQuestionsTotal}\n` +
+      `📚 Вопросы по JavaScript: решено верно ${jsCorrect} из ${jsQuestionsTotal}\n` +
+      `📚 Вопросы по React: решено верно ${reactCorrect} из ${reactQuestionsTotal}`;
 
     await ctx.reply(profileMessage);
   } else {
@@ -174,6 +195,7 @@ async function handleQuizAnswer(ctx, answer) {
 
     if (answer === correctAnswer) {
       await ctx.reply('Верно!');
+      ctx.session.correctAnswers[ctx.session.currentCategory]++;
       if (ctx.session.ratingMode) {
         ctx.session.score += 1;
         await startRatingQuiz(ctx);
