@@ -1,6 +1,8 @@
 require('dotenv').config();
 const { Bot, GrammyError, HttpError, Keyboard, InlineKeyboard, session } = require('grammy');
 const fs = require('fs').promises;
+const sqlite3 = require('sqlite3').verbose();
+const { open } = require('sqlite');
 
 // Создание экземпляра бота
 const bot = new Bot(process.env.BOT_API_KEY);
@@ -11,6 +13,7 @@ bot.use(session({
 }));
 
 let questionsData = {};
+let db;
 
 async function loadQuestions() {
   const categories = {
@@ -27,6 +30,36 @@ async function loadQuestions() {
       console.error(`Ошибка при загрузке вопросов из файла ${file}:`, error);
     }
   }
+}
+
+async function initDatabase() {
+  db = await open({
+    filename: 'leaderboard.db',
+    driver: sqlite3.Database
+  });
+
+  await db.exec(`
+    CREATE TABLE IF NOT EXISTS leaderboard (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      username TEXT NOT NULL,
+      score INTEGER NOT NULL
+    )
+  `);
+}
+
+async function updateLeaderboard(username, score) {
+  const existingEntry = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
+  if (existingEntry) {
+    if (existingEntry.score < score) {
+      await db.run('UPDATE leaderboard SET score = ? WHERE username = ?', score, username);
+    }
+  } else {
+    await db.run('INSERT INTO leaderboard (username, score) VALUES (?, ?)', username, score);
+  }
+}
+
+async function getLeaderboard() {
+  return await db.all('SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 10');
 }
 
 function initializeQuizState(ctx, category) {
@@ -54,6 +87,8 @@ bot.command('start', async (ctx) => {
     .text('React')
     .row()
     .text('Рейтинговый режим')
+    .row()
+    .text('Таблица лидеров')
     .row();
 
   await ctx.reply(
@@ -75,6 +110,8 @@ bot.on('message', async (ctx) => {
       .text('React')
       .row()
       .text('Рейтинговый режим')
+      .row()
+      .text('Таблица лидеров')
       .row();
 
     await ctx.reply('Выберите категорию:', {
@@ -97,6 +134,9 @@ bot.on('message', async (ctx) => {
       case 'Рейтинговый режим':
         initializeRatingMode(ctx);
         await startRatingQuiz(ctx);
+        break;
+      case 'Таблица лидеров':
+        await showLeaderboard(ctx);
         break;
       default:
         handleQuizAnswer(ctx, text);
@@ -123,6 +163,8 @@ async function handleQuizAnswer(ctx, answer) {
       }
     } else {
       if (ctx.session.ratingMode) {
+        const username = ctx.from.username || ctx.from.first_name;
+        await updateLeaderboard(username, ctx.session.score);
         await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`);
         ctx.session.ratingMode = false; // Завершаем рейтинговый режим
         ctx.session.score = 0;
@@ -202,8 +244,24 @@ async function startRatingQuiz(ctx) {
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
 
+async function showLeaderboard(ctx) {
+  const topPlayers = await getLeaderboard();
+  if (topPlayers.length === 0) {
+    await ctx.reply('Таблица лидеров пока пуста.');
+    return;
+  }
+
+  let leaderboardMessage = 'Таблица лидеров:\n';
+  topPlayers.forEach(({ username, score }, index) => {
+    leaderboardMessage += `${index + 1}. ${username}: ${score} очков\n`;
+  });
+
+  await ctx.reply(leaderboardMessage);
+}
+
 // Запуск бота
 (async () => {
   await loadQuestions();
+  await initDatabase();
   bot.start();
 })();
