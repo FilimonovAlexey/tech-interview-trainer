@@ -24,6 +24,7 @@ bot.use(session({
 let questionsData = {};
 let db;
 
+// Загрузка вопросов в память при старте бота
 async function loadQuestions() {
   const categories = {
     html: 'html_questions.json',
