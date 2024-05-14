@@ -10,6 +10,20 @@ bot.use(session({
   initial: () => ({})
 }));
 
+let questionsData = {};
+
+async function loadQuestions() {
+  const categories = ['html', 'css', 'js', 'react'];
+  for (const category of categories) {
+    try {
+      const data = await fs.readFile(`questions/${category}_questions.json`, 'utf8');
+      questionsData[category] = JSON.parse(data).questions;
+    } catch (error) {
+      console.error(`Ошибка при загрузке вопросов из файла ${category}_questions.json:`, error);
+    }
+  }
+}
+
 function initializeQuizState(ctx, category) {
   if (!ctx.session.askedQuestions) {
     ctx.session.askedQuestions = {};
@@ -53,19 +67,12 @@ bot.on('message', async (ctx) => {
   } else {
     switch (text) {
       case 'HTML':
-        await startHTMLQuiz(ctx);
-        break;
       case 'CSS':
-        await startCSSQuiz(ctx);
-        break;
       case 'JavaScript':
-        await startJavaScriptQuiz(ctx);
-        break;
       case 'React':
-        await startReactQuiz(ctx);
+        await startQuiz(ctx, text.toLowerCase());
         break;
       default:
-        // Обработка ответов на вопросы
         handleQuizAnswer(ctx, text);
     }
   }
@@ -82,25 +89,7 @@ async function handleQuizAnswer(ctx, answer) {
 
     if (answer === correctAnswer) {
       await ctx.reply('Верно!');
-      // Выбираем функцию викторины на основе текущей категории
-      switch (ctx.session.currentCategory) {
-        case 'HTML':
-          await startHTMLQuiz(ctx);
-          break;
-        case 'CSS':
-          await startCSSQuiz(ctx);
-          break;
-        case 'JavaScript':
-          await startJavaScriptQuiz(ctx);
-          break;
-        case 'React':
-          await startReactQuiz(ctx);
-          break;
-        default:
-          await ctx.reply('Выберите категорию:', {
-            reply_markup: startKeyboard,
-          });
-      }
+      await startQuiz(ctx, ctx.session.currentCategory);
     } else {
       await ctx.reply('Неправильно. Попробуйте еще раз.');
     }
@@ -109,7 +98,6 @@ async function handleQuizAnswer(ctx, answer) {
     await ctx.reply('Произошла ошибка при обработке ответа на вопрос. Попробуйте еще раз позже.');
   }
 }
-
 
 function getRandomQuestion(questions, asked) {
   const availableQuestions = questions.filter((_, index) => !asked.includes(index));
@@ -120,101 +108,34 @@ function getRandomQuestion(questions, asked) {
   return availableQuestions[randomIndex];
 }
 
-async function startHTMLQuiz(ctx) {
-  initializeQuizState(ctx, 'HTML');
-  
-  const data = await fs.readFile('questions/html_questions.json', 'utf8');
-  const { questions } = JSON.parse(data);
-  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['HTML']);
-  
-  if (!questionData) {
-    await ctx.reply("Вы ответили на все вопросы по HTML!");
-    return;
-  }
-  
-  const questionIndex = questions.indexOf(questionData);
-  ctx.session.askedQuestions['HTML'].push(questionIndex);
-  ctx.session.currentQuestion = questionData;
-  ctx.session.currentCategory = 'HTML';
-  
-  const keyboard = new Keyboard();
-  questionData.options.forEach(option => keyboard.text(option).row());
-  keyboard.text('Назад').row(); // Добавляем кнопку "Назад"
-  
-  await ctx.reply(questionData.question, { reply_markup: keyboard });
-}
+async function startQuiz(ctx, category) {
+  initializeQuizState(ctx, category);
 
-async function startCSSQuiz(ctx) {
-  initializeQuizState(ctx, 'CSS');
-  
-  const data = await fs.readFile('questions/css_questions.json', 'utf8');
-  const { questions } = JSON.parse(data);
-  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['CSS']);
-  
-  if (!questionData) {
-    await ctx.reply("Вы ответили на все вопросы по CSS!");
+  const questions = questionsData[category];
+  if (!questions) {
+    await ctx.reply(`Не удалось загрузить вопросы для категории ${category.toUpperCase()}`);
     return;
   }
-  
-  const questionIndex = questions.indexOf(questionData);
-  ctx.session.askedQuestions['CSS'].push(questionIndex);
-  ctx.session.currentQuestion = questionData;
-  ctx.session.currentCategory = 'CSS';
-  
-  const keyboard = new Keyboard();
-  questionData.options.forEach(option => keyboard.text(option).row());
-  keyboard.text('Назад').row(); // Добавляем кнопку "Назад"
-  
-  await ctx.reply(questionData.question, { reply_markup: keyboard });
-}
 
-async function startJavaScriptQuiz(ctx) {
-  initializeQuizState(ctx, 'JavaScript');
-  
-  const data = await fs.readFile('questions/js_questions.json', 'utf8');
-  const { questions } = JSON.parse(data);
-  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['JavaScript']);
-  
+  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions[category]);
   if (!questionData) {
-    await ctx.reply("Вы ответили на все вопросы по JavaScript!");
+    await ctx.reply(`Вы ответили на все вопросы по ${category.toUpperCase()}!`);
     return;
   }
-  
+
   const questionIndex = questions.indexOf(questionData);
-  ctx.session.askedQuestions['JavaScript'].push(questionIndex);
+  ctx.session.askedQuestions[category].push(questionIndex);
   ctx.session.currentQuestion = questionData;
-  ctx.session.currentCategory = 'JavaScript';
-  
+  ctx.session.currentCategory = category;
+
   const keyboard = new Keyboard();
   questionData.options.forEach(option => keyboard.text(option).row());
   keyboard.text('Назад').row();
-  
+
   await ctx.reply(questionData.question, { reply_markup: keyboard });
 }
 
-async function startReactQuiz(ctx) {
-  initializeQuizState(ctx, 'React');
-  
-  const data = await fs.readFile('questions/react_questions.json', 'utf8');
-  const { questions } = JSON.parse(data);
-  const questionData = getRandomQuestion(questions, ctx.session.askedQuestions['React']);
-  
-  if (!questionData) {
-    await ctx.reply("Вы ответили на все вопросы по React!");
-    return;
-  }
-  
-  const questionIndex = questions.indexOf(questionData);
-  ctx.session.askedQuestions['React'].push(questionIndex);
-  ctx.session.currentQuestion = questionData;
-  ctx.session.currentCategory = 'React';
-  
-  const keyboard = new Keyboard();
-  questionData.options.forEach(option => keyboard.text(option).row());
-  keyboard.text('Назад').row();
-  
-  await ctx.reply(questionData.question, { reply_markup: keyboard });
-}
-
-// Запуск бота
-bot.start();
+(async () => {
+  await loadQuestions();
+  bot.start();
+})();
