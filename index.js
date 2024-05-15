@@ -58,6 +58,13 @@ async function initDatabase() {
   `);
 }
 
+async function createProfile(username) {
+  const existingEntry = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
+  if (!existingEntry) {
+    await db.run('INSERT INTO leaderboard (username, score, last_played) VALUES (?, ?, ?)', username, 0, 'Еще не играл');
+  }
+}
+
 async function updateLeaderboard(username, score) {
   const now = new Date().toISOString();
   const existingEntry = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
@@ -107,6 +114,9 @@ function getStartKeyboard() {
 }
 
 bot.command('start', async (ctx) => {
+  const username = ctx.from.username || ctx.from.first_name;
+  await createProfile(username);
+
   const startKeyboard = getStartKeyboard();
 
   await ctx.reply(
@@ -135,7 +145,7 @@ bot.command('profile', async (ctx) => {
   const reactCorrect = ctx.session.correctAnswers.react;
 
   if (result) {
-    const formattedDate = format(new Date(result.last_played), 'dd MMMM yyyy, HH:mm', { locale: ru });
+    const formattedDate = result.last_played === 'Еще не играл' ? result.last_played : format(new Date(result.last_played), 'dd MMMM yyyy, HH:mm', { locale: ru });
     const profileMessage = `👤 Профиль пользователя ${username}:\n` +
       `🏆 Счет в рейтинговой игре: ${result.score} очков\n` +
       `📅 Дата последней игры: ${formattedDate}\n` +
