@@ -14,6 +14,166 @@
       "question": "Каким образом можно оптимизировать производительность функциональных компонентов в React?",
       "options": ["Использовать React.PureComponent", "Использовать useMemo()", "Использовать shouldComponentUpdate()", "Использовать React.Component"],
       "correctOption": 1
+    },
+    {
+      "question": "Что такое JSX?",
+      "options": ["Функция", "Стилизация компонентов", "Расширение синтаксиса JavaScript", "Библиотека для тестирования"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какой метод используется для преобразования списка компонентов?",
+      "options": ["map()", "filter()", "reduce()", "forEach()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Как передать данные от родительского компонента к дочернему?",
+      "options": ["С помощью состояния (state)", "С помощью props", "С помощью контекста (context)", "С помощью хуков"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой хук используется для управления состоянием компонента?",
+      "options": ["useState()", "useEffect()", "useContext()", "useReducer()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что такое virtual DOM?",
+      "options": ["Копия настоящего DOM", "Объектная модель браузера", "Виртуальное представление UI", "Абстракция над компонентами"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какой метод класса используется для обновления состояния в классовом компоненте?",
+      "options": ["this.setState()", "this.updateState()", "this.changeState()", "this.modifyState()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что такое React.Fragment?",
+      "options": ["Компонент для группировки дочерних элементов", "Хук для управления состоянием", "Метод жизненного цикла", "Библиотека для работы с фрагментами"],
+      "correctOption": 0
+    },
+    {
+      "question": "Каким образом можно избежать повторного рендеринга компонента?",
+      "options": ["Использовать React.memo", "Использовать useState()", "Использовать componentDidMount()", "Использовать useEffect()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой метод используется для обработки событий в React?",
+      "options": ["addEventListener()", "handleEvent()", "onEvent()", "eventHandler()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой метод жизненного цикла используется для выполнения действий после обновления компонента?",
+      "options": ["componentDidMount()", "componentWillUpdate()", "componentDidUpdate()", "componentWillUnmount()"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какой хук позволяет управлять побочными эффектами в функциональных компонентах?",
+      "options": ["useState()", "useEffect()", "useContext()", "useReducer()"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой метод используется для принудительного обновления компонента?",
+      "options": ["forceUpdate()", "refresh()", "reload()", "reRender()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что из перечисленного не является типом данных в propTypes?",
+      "options": ["string", "number", "boolean", "symbol"],
+      "correctOption": 3
+    },
+    {
+      "question": "Что такое Context API в React?",
+      "options": ["Метод для изменения состояния", "Способ передачи данных через дерево компонентов", "Инструмент для тестирования", "Библиотека для управления состоянием"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой хук используется для создания ссылки на DOM-элемент?",
+      "options": ["useState()", "useRef()", "useEffect()", "useCallback()"],
+      "correctOption": 1
+    },
+    {
+      "question": "Что такое HOC (Higher-Order Component)?",
+      "options": ["Компонент, который возвращает другой компонент", "Метод жизненного цикла", "Специальный хук", "Метод для оптимизации"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой хук используется для мемоизации функции?",
+      "options": ["useMemo()", "useCallback()", "useRef()", "useState()"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какой хук используется для управления редюсерами состояния?",
+      "options": ["useState()", "useEffect()", "useContext()", "useReducer()"],
+      "correctOption": 3
+    },
+    {
+      "question": "Как можно передать методы и свойства между компонентами без использования props?",
+      "options": ["Использовать контекст (context)", "Использовать хуки", "Использовать состояния (state)", "Использовать методы жизненного цикла"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой метод используется для преобразования JSX в элемент React?",
+      "options": ["ReactDOM.render()", "React.createElement()", "React.cloneElement()", "React.Component()"],
+      "correctOption": 1
+    },
+    {
+      "question": "Что делает метод React.cloneElement()?",
+      "options": ["Создает копию элемента с новыми props", "Клонирует весь компонент", "Удаляет элемент", "Обновляет состояние элемента"],
+      "correctOption": 0
+    },
+    {
+      "question": "Как можно объединить несколько редюсеров в React?",
+      "options": ["combineReducers()", "mergeReducers()", "composeReducers()", "connectReducers()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой метод используется для выполнения кода перед размонтированием компонента?",
+      "options": ["componentWillUnmount()", "componentWillMount()", "componentDidMount()", "componentDidUpdate()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что из перечисленного не является методом жизненного цикла компонента?",
+      "options": ["componentDidMount()", "componentWillUnmount()", "componentDidCatch()", "componentWillReceiveProps()"],
+      "correctOption": 3
+    },
+    {
+      "question": "Какой метод используется для инициализации состояния в классовом компоненте?",
+      "options": ["constructor()", "initialize()", "initState()", "setup()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает метод shouldComponentUpdate()?",
+      "options": ["Определяет, должен ли компонент обновляться", "Обновляет состояние компонента", "Удаляет компонент", "Создает новый компонент"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой хук используется для работы с контекстом в функциональных компонентах?",
+      "options": ["useContext()", "useState()", "useEffect()", "useReducer()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой хук позволяет выполнять побочные эффекты в функциональных компонентах?",
+      "options": ["useState()", "useEffect()", "useContext()", "useReducer()"],
+      "correctOption": 1
+    },
+    {
+      "question": "Что делает метод React.PureComponent?",
+      "options": ["Оптимизирует рендеринг компонентов", "Создает новый элемент", "Обновляет состояние", "Удаляет компонент"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой метод используется для создания рефов в классовом компоненте?",
+      "options": ["React.createRef()", "React.useRef()", "React.newRef()", "React.ref()"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какой метод используется для доступа к элементу DOM в классовом компоненте?",
+      "options": ["this.ref", "this.dom", "this.element", "this.node"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что такое ключи (keys) в React?",
+      "options": ["Уникальные идентификаторы для элементов списка", "Идентификаторы состояния", "Методы компонента", "Свойства компонента"],
+      "correctOption": 0
     }
   ]
 }
