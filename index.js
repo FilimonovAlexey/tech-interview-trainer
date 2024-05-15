@@ -17,7 +17,8 @@ bot.use(session({
       css: 0,
       js: 0,
       react: 0
-    }
+    },
+    hasStartedRatingMode: false
   })
 }));
 
@@ -183,6 +184,12 @@ bot.on('message', async (ctx) => {
         await startQuiz(ctx, 'react');
         break;
       case '🏆Рейтинговый режим':
+        if (!ctx.session.hasStartedRatingMode) {
+          ctx.session.hasStartedRatingMode = true;
+          await ctx.reply(
+            'Рейтинговый режим содержит вопросы из всех категорий. За каждый правильный ответ дается балл, а при неверном ответе игра прекращается. Таблица лидеров выводит топ 10 игроков в рейтинге.'
+          );
+        }
         initializeRatingMode(ctx);
         await startRatingQuiz(ctx);
         break;
