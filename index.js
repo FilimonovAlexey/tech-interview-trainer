@@ -243,7 +243,10 @@ async function startQuiz(ctx, category) {
 
   const questionData = getRandomQuestion(questions, ctx.session.askedQuestions[category]);
   if (!questionData) {
-    await ctx.reply(`Вы ответили на все вопросы по ${category.toUpperCase()}!`);
+    const startKeyboard = getStartKeyboard();
+    await ctx.reply(`Вы ответили на все вопросы по ${category.toUpperCase()}!`, {
+      reply_markup: startKeyboard,
+    });
     return;
   }
 
