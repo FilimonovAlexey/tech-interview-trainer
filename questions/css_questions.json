@@ -14,6 +14,181 @@
       "question": "Что описывает 'z-index' в CSS?",
       "options": ["Горизонтальное выравнивание", "Вертикальное выравнивание", "Порядок наложения элементов", "Прозрачность элементов"],
       "correctOption": 2
+    },
+    {
+      "question": "Какое значение по умолчанию имеет свойство 'position' в CSS?",
+      "options": ["absolute", "relative", "fixed", "static"],
+      "correctOption": 3
+    },
+    {
+      "question": "Какое свойство CSS используется для задания внутренних отступов элемента?",
+      "options": ["margin", "padding", "border", "outline"],
+      "correctOption": 1
+    },
+    {
+      "question": "Как можно сделать текст полужирным в CSS?",
+      "options": ["font-style: bold;", "text-decoration: bold;", "font-weight: bold;", "text-transform: bold;"],
+      "correctOption": 2
+    },
+    {
+      "question": "Что делает свойство 'display: none;' в CSS?",
+      "options": ["Скрывает элемент и освобождает занимаемое место", "Скрывает элемент, но оставляет занимаемое место", "Делает элемент прозрачным", "Удаляет элемент из документа"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какое свойство отвечает за отображение горизонтальной полосы прокрутки?",
+      "options": ["overflow-y", "overflow-x", "scroll-x", "scroll-y"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое значение свойства 'position' позволяет фиксировать элемент относительно окна браузера?",
+      "options": ["absolute", "relative", "fixed", "static"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какое значение свойства 'flex-direction' располагает элементы в столбец?",
+      "options": ["row", "column", "wrap", "nowrap"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое свойство CSS используется для изменения цвета текста?",
+      "options": ["background-color", "color", "text-color", "font-color"],
+      "correctOption": 1
+    },
+    {
+      "question": "Что делает свойство 'border-radius'?",
+      "options": ["Задает радиус бордюра", "Изменяет ширину бордюра", "Скругляет углы элемента", "Добавляет тень к бордюру"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какое свойство CSS используется для задания внешних отступов элемента?",
+      "options": ["margin", "padding", "border", "outline"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает свойство 'text-align: center;'?",
+      "options": ["Выравнивает текст по левому краю", "Выравнивает текст по правому краю", "Выравнивает текст по центру", "Выравнивает текст по обеим сторонам"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какое значение свойства 'display' превращает элемент в строчный блок?",
+      "options": ["inline", "block", "inline-block", "flex"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какое свойство CSS используется для добавления тени к тексту?",
+      "options": ["box-shadow", "text-shadow", "shadow", "filter"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое свойство отвечает за расположение фона элемента?",
+      "options": ["background-position", "background-size", "background-repeat", "background-attachment"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает свойство 'float' в CSS?",
+      "options": ["Открывает всплывающее окно", "Позволяет элементу 'плавать' по экрану", "Устанавливает обтекание текста вокруг элемента", "Добавляет анимацию к элементу"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какое свойство CSS используется для задания интервала между строками текста?",
+      "options": ["letter-spacing", "line-height", "word-spacing", "text-indent"],
+      "correctOption": 1
+    },
+    {
+      "question": "Что делает свойство 'overflow' в CSS?",
+      "options": ["Определяет, как будет обрабатываться содержимое, выходящее за пределы элемента", "Определяет, как будет отображаться текст", "Определяет, как будут обработаны события мыши", "Определяет, как будет изменяться размер элемента"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какое значение свойства 'position' позволяет элементу 'плавать' над другими элементами?",
+      "options": ["absolute", "relative", "fixed", "static"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает свойство 'text-decoration' в CSS?",
+      "options": ["Изменяет цвет текста", "Добавляет стили к тексту, такие как подчеркивание", "Изменяет размер текста", "Изменяет шрифт текста"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое свойство CSS используется для задания ширины элемента?",
+      "options": ["width", "height", "size", "length"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какое свойство CSS используется для задания высоты элемента?",
+      "options": ["width", "height", "size", "length"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое значение свойства 'display' превращает элемент в блочный элемент?",
+      "options": ["inline", "block", "inline-block", "flex"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое значение свойства 'flex-wrap' позволяет элементам переноситься на следующую строку?",
+      "options": ["nowrap", "wrap", "wrap-reverse", "inherit"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое свойство CSS используется для задания внешней тени элемента?",
+      "options": ["box-shadow", "text-shadow", "shadow", "filter"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает свойство 'visibility: hidden;' в CSS?",
+      "options": ["Скрывает элемент и освобождает занимаемое место", "Скрывает элемент, но оставляет занимаемое место", "Делает элемент прозрачным", "Удаляет элемент из документа"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое свойство CSS используется для задания цвета фона элемента?",
+      "options": ["background-color", "color", "text-color", "font-color"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какое свойство CSS используется для задания размеров фона?",
+      "options": ["background-position", "background-size", "background-repeat", "background-attachment"],
+      "correctOption": 1
+    },
+    {
+      "question": "Что делает свойство 'outline' в CSS?",
+      "options": ["Добавляет внутренний отступ", "Добавляет внешнюю тень", "Добавляет контур вокруг элемента", "Добавляет границу вокруг элемента"],
+      "correctOption": 2
+    },
+    {
+      "question": "Какое свойство CSS используется для задания шрифта текста?",
+      "options": ["font-family", "font-style", "font-weight", "font-size"],
+      "correctOption": 0
+    },
+    {
+      "question": "Какое свойство CSS используется для изменения размера шрифта?",
+      "options": ["font-family", "font-style", "font-weight", "font-size"],
+      "correctOption": 3
+    },
+    {
+      "question": "Какое значение свойства 'flex-direction' располагает элементы в строку?",
+      "options": ["row", "column", "wrap", "nowrap"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает свойство 'text-indent' в CSS?",
+      "options": ["Изменяет межбуквенный интервал", "Изменяет межстрочный интервал", "Изменяет интервал между словами", "Задает отступ для первой строки текста"],
+      "correctOption": 3
+    },
+    {
+      "question": "Какое свойство CSS используется для задания стиля шрифта?",
+      "options": ["font-family", "font-style", "font-weight", "font-size"],
+      "correctOption": 1
+    },
+    {
+      "question": "Какое свойство CSS используется для задания цвета границы элемента?",
+      "options": ["border-color", "border-style", "border-width", "border-radius"],
+      "correctOption": 0
+    },
+    {
+      "question": "Что делает свойство 'white-space' в CSS?",
+      "options": ["Изменяет цвет пробелов", "Изменяет размер пробелов", "Управляет отображением пробелов и переносов строк", "Добавляет пробелы вокруг элемента"],
+      "correctOption": 2
     }
   ]
 }

@@ -6,10 +6,8 @@ const { open } = require('sqlite');
 const { format } = require('date-fns');
 const { ru } = require('date-fns/locale'); // Подключаем русскую локаль
 
-// Создание экземпляра бота
 const bot = new Bot(process.env.BOT_API_KEY);
 
-// Настройка сессии с использованием внутреннего хранилища
 bot.use(session({
   initial: () => ({
     correctAnswers: {
@@ -25,7 +23,6 @@ bot.use(session({
 let questionsData = {};
 let db;
 
-// Загрузка вопросов в память при старте бота
 async function loadQuestions() {
   const categories = {
     html: 'html_questions.json',
@@ -224,7 +221,7 @@ async function handleQuizAnswer(ctx, answer) {
       if (ctx.session.ratingMode) {
         const username = ctx.from.username || ctx.from.first_name;
         await updateLeaderboard(username, ctx.session.score);
-        ctx.session.ratingMode = false; // Завершаем рейтинговый режим
+        ctx.session.ratingMode = false;
         const startKeyboard = getStartKeyboard();
         await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`, {
           reply_markup: startKeyboard,
@@ -243,7 +240,7 @@ async function handleQuizAnswer(ctx, answer) {
 function getRandomQuestion(questions, asked) {
   const availableQuestions = questions.filter((_, index) => !asked.includes(index));
   if (availableQuestions.length === 0) {
-    return null; // Все вопросы были заданы
+    return null;
   }
   const randomIndex = Math.floor(Math.random() * availableQuestions.length);
   return availableQuestions[randomIndex];
@@ -324,13 +321,11 @@ async function showLeaderboard(ctx) {
   await ctx.reply(leaderboardMessage);
 }
 
-// Установка описаний команд
 bot.api.setMyCommands([
   { command: 'start', description: 'Запуск бота' },
   { command: 'profile', description: 'Просмотр вашего профиля' }
 ]);
 
-// Запуск бота
 (async () => {
   await loadQuestions();
   await initDatabase();
