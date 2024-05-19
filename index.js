@@ -4,7 +4,7 @@ const fs = require('fs').promises;
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
 const { format } = require('date-fns');
-const { ru } = require('date-fns/locale'); // Подключаем русскую локаль
+const { ru } = require('date-fns/locale');
 
 const bot = new Bot(process.env.BOT_API_KEY);
 
