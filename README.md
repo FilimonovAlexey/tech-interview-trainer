@@ -1,6 +1,8 @@
-# Квиз Бот для Подготовки к Собеседованию на Frontend Разработчика
+# Telegram Бот для Подготовки к Собеседованию на Frontend Разработчика
 
 Этот Telegram бот разработан для помощи в подготовке к собеседованиям на позицию Frontend разработчика. Бот предлагает викторины по различным категориям, таким как HTML, CSS, JavaScript и React, и предоставляет рейтинговый режим для оценки навыков пользователя.
+
+![](./public/prev.png)
 
 ## Функциональности бота
 - **Старт**: Пользователь начинает взаимодействие с ботом, используя команду `/start`. Бот приветствует пользователя и предлагает выбрать категорию вопросов или включить рейтинговый режим.
@@ -20,3 +22,71 @@
 - `index.js` - Главный файл с логикой бота.
 - `questions/` - Папка с файлами вопросов по HTML, CSS, JavaScript и React.
 - `leaderboard.db` - Файл базы данных SQLite для хранения таблицы лидеров.
+
+## Демо бота
+Обзор возможностей бота и инструкция по настройке - [Смотреть на YouTube]()  
+Опробовать бота можно в Telegram по ссылке - [@]()
+
+## Деплой бота на сервер
+
+* Установим Git и обновим компоненты системы
+```bash
+sudo apt update
+sudo apt install git
+```
+
+* Клонируем репозиторий с ботом на сервер:
+```bash
+git clone https://github.com/FilimonovAlexey/tech-interview-trainer.git
+```
+
+* Переходим в папку проекта:
+```bash
+cd tech-interview-trainer
+```
+
+* Устанавливаем Node.js и пакетный менеджер npm
+```bash
+sudo apt install nodejs
+sudo apt install npm
+```
+
+* Обновим Node js и npm, после выполняем перезапуск сервера
+```bash
+sudo npm install -g n
+sudo n stable
+```
+* Устанавливаем все зависимости
+```bash
+cd tech-interview-trainer
+npm i
+```
+
+* Создаем глобальную переменную
+```bash
+nano .env
+```
+
+* Создаем внутри файлов .env две переменные
+```bash
+BOT_API_KEY=''
+```
+
+* Устанавливаем pm2 для запуска бота
+```bash
+npm i pm2 -g
+```
+
+* Запуск бота на сервере
+```bash
+pm2 start index.js
+```
+
+## Документация по grammy js
+
+[Документация grammy js](https://grammy.dev/guide/)
+
+
+## Authors
+
+- [@FilimonovAlexey](https://github.com/FilimonovAlexey)
