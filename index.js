@@ -81,6 +81,11 @@ async function getLeaderboard() {
   return await db.all('SELECT username, score FROM leaderboard ORDER BY score DESC LIMIT 10');
 }
 
+async function getTotalUsers() {
+  const result = await db.get('SELECT COUNT(*) AS count FROM leaderboard');
+  return result.count;
+}
+
 function initializeQuizState(ctx, category) {
   if (!ctx.session.askedQuestions) {
     ctx.session.askedQuestions = {};
@@ -155,6 +160,18 @@ bot.command('profile', async (ctx) => {
     await ctx.reply(profileMessage);
   } else {
     await ctx.reply('Профиль не найден. Начните игру в рейтинговом режиме, чтобы создать профиль.');
+  }
+});
+
+bot.command('admin', async (ctx) => {
+  const userId = ctx.from.id;
+  const adminId = parseInt(process.env.ADMIN_ID, 10);
+
+  if (userId === adminId) {
+    const totalUsers = await getTotalUsers();
+    await ctx.reply(`Общее количество пользователей: ${totalUsers}`);
+  } else {
+    await ctx.reply('У вас нет прав для использования этой команды.');
   }
 });
 
