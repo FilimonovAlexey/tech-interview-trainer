@@ -93,6 +93,9 @@ function initializeQuizState(ctx, category) {
   if (!ctx.session.askedQuestions[category]) {
     ctx.session.askedQuestions[category] = [];
   }
+  if (ctx.session.firstAttempt === undefined) {
+    ctx.session.firstAttempt = true;
+  }
 }
 
 function initializeRatingMode(ctx) {
@@ -177,24 +180,41 @@ bot.command('admin', async (ctx) => {
 
 bot.on('message', async (ctx) => {
   const { text } = ctx.message;
+
+  if (ctx.session.awaitingRetryConfirmation) {
+    if (text === 'Да') {
+      const category = ctx.session.awaitingRetryConfirmation;
+      ctx.session.askedQuestions[category] = [];
+      ctx.session.firstAttempt = false;
+      ctx.session.awaitingRetryConfirmation = null;
+      await startQuiz(ctx, category);
+    } else if (text === 'Нет') {
+      ctx.session.awaitingRetryConfirmation = null;
+      const startKeyboard = getStartKeyboard();
+      await ctx.reply('Выберите категорию:', { reply_markup: startKeyboard });
+    }
+    return;
+  }
+
   if (text === 'Назад ↩️') {
     const startKeyboard = getStartKeyboard();
-
-    await ctx.reply('Выберите категорию:', {
-      reply_markup: startKeyboard,
-    });
+    await ctx.reply('Выберите категорию:', { reply_markup: startKeyboard });
   } else {
     switch (text) {
       case 'HTML':
+        ctx.session.firstAttempt = true;
         await startQuiz(ctx, 'html');
         break;
       case 'CSS':
+        ctx.session.firstAttempt = true;
         await startQuiz(ctx, 'css');
         break;
       case 'JavaScript':
+        ctx.session.firstAttempt = true;
         await startQuiz(ctx, 'js');
         break;
       case 'React':
+        ctx.session.firstAttempt = true;
         await startQuiz(ctx, 'react');
         break;
       case '🏆Рейтинговый режим':
@@ -227,7 +247,9 @@ async function handleQuizAnswer(ctx, answer) {
 
     if (answer === correctAnswer) {
       await ctx.reply('Верно!');
-      ctx.session.correctAnswers[ctx.session.currentCategory]++;
+      if (ctx.session.firstAttempt) {
+        ctx.session.correctAnswers[ctx.session.currentCategory]++;
+      }
       if (ctx.session.ratingMode) {
         ctx.session.score += 1;
         await startRatingQuiz(ctx);
@@ -240,9 +262,7 @@ async function handleQuizAnswer(ctx, answer) {
         await updateLeaderboard(username, ctx.session.score);
         ctx.session.ratingMode = false;
         const startKeyboard = getStartKeyboard();
-        await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`, {
-          reply_markup: startKeyboard,
-        });
+        await ctx.reply(`Ошибка! Вы набрали ${ctx.session.score} очков.`, { reply_markup: startKeyboard });
         ctx.session.score = 0;
       } else {
         await ctx.reply('Неправильно. Попробуйте еще раз.');
@@ -274,10 +294,15 @@ async function startQuiz(ctx, category) {
 
   const questionData = getRandomQuestion(questions, ctx.session.askedQuestions[category]);
   if (!questionData) {
-    const startKeyboard = getStartKeyboard();
-    await ctx.reply(`Вы ответили на все вопросы по ${category.toUpperCase()}!`, {
-      reply_markup: startKeyboard,
+    const retryKeyboard = new Keyboard()
+      .text('Да').row()
+      .text('Нет').row();
+
+    await ctx.reply(`Вы ответили на все вопросы по ${category.toUpperCase()}! Желаете повторить?`, {
+      reply_markup: retryKeyboard,
     });
+
+    ctx.session.awaitingRetryConfirmation = category;
     return;
   }
 
