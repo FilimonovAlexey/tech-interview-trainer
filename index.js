@@ -1,5 +1,5 @@
 require('dotenv').config();
-const { Bot, GrammyError, HttpError, Keyboard, InlineKeyboard, session } = require('grammy');
+const { Bot, Keyboard, session } = require('grammy');
 const fs = require('fs').promises;
 const sqlite3 = require('sqlite3').verbose();
 const { open } = require('sqlite');
@@ -46,35 +46,23 @@ async function initDatabase() {
     driver: sqlite3.Database
   });
 
-  await db.exec(`
-    CREATE TABLE IF NOT EXISTS leaderboard (
-      id INTEGER PRIMARY KEY AUTOINCREMENT,
-      username TEXT NOT NULL,
-      score INTEGER NOT NULL,
-      last_played TEXT NOT NULL
-    )
-  `);
+  // https://www.npmjs.com/package/sqlite#migrations
+  await db.migrate();
 }
 
 async function createProfile(username) {
-  const existingEntry = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
-  if (!existingEntry) {
-    await db.run('INSERT INTO leaderboard (username, score, last_played) VALUES (?, ?, ?)', username, 0, 'Еще не играл');
-  }
+  // https://www.sqlite.org/lang_insert.html
+  await db.run('INSERT OR IGNORE INTO leaderboard (username, score, last_played) VALUES (?, ?, ?)', username, 0, 'Еще не играл');
 }
 
 async function updateLeaderboard(username, score) {
   const now = new Date().toISOString();
-  const existingEntry = await db.get('SELECT * FROM leaderboard WHERE username = ?', username);
-  if (existingEntry) {
-    if (existingEntry.score < score) {
-      await db.run('UPDATE leaderboard SET score = ?, last_played = ? WHERE username = ?', score, now, username);
-    } else {
-      await db.run('UPDATE leaderboard SET last_played = ? WHERE username = ?', now, username);
-    }
-  } else {
-    await db.run('INSERT INTO leaderboard (username, score, last_played) VALUES (?, ?, ?)', username, score, now);
-  }
+  // https://www.sqlite.org/syntax/upsert-clause.html
+  await db.run('INSERT INTO leaderboard (username, score, last_played) \
+    VALUES (?, ?, ?) \
+    ON CONFLICT (username) DO UPDATE \
+    SET score = MAX(EXCLUDED.score, leaderboard.score), last_played = EXCLUDED.last_played',
+    username, score, now);
 }
 
 async function getLeaderboard() {
