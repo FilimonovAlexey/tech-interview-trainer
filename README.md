@@ -28,6 +28,7 @@
 Опробовать бота можно в Telegram по ссылке - [@Tehnomaniak_trainer_bot](https://t.me/Tehnomaniak_trainer_bot)
 
 ## Деплой бота на сервер
+Видео-гайд по деплою Telegram бота на сервер - [Смотреть на YouTube](https://youtu.be/vPqAYdjkm4o)  
 
 * Установим Git и обновим компоненты системы
 ```bash
